@@ -3,10 +3,14 @@
 <head>
 <meta charset="utf-8"/>
 <title>Responsive Slideout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
 <style type="text/css">
 html {
 	background: #eee;
 	font: normal normal normal 12px/1.5 sans-serif;
+}
+body {
+	margin: 0;
 }
 .page {
 	width: 940px;
@@ -21,12 +25,12 @@ html {
 }
 .sidebar {
 	float: left;
-	width: 20%;
+	width: 192px;
 }
 .sidebar_nav {
 	margin-right: 20px;
 	padding: 10px;
-	background: #eee;
+	background: #ccc;
 }
 .main {
 	display: table-cell;
@@ -37,9 +41,8 @@ html {
 	word-spacing: -.31em;
 }
 .col {
-	box-sizing: border-box;
 	padding: 0 0 30px 20px;
-	width: 25%;
+	width: 172px;
 	display: inline-block;
 	word-spacing: 0;
 }
@@ -51,7 +54,51 @@ html {
 
 @media screen and (max-width:1023px) {
 	.page {
-		width: ;
+		width: 556px;
+	}
+}
+@media screen and (max-width: 767px) {
+	.page {
+		width: 364px;
+	}
+}
+@media screen and (max-width: 479px) {
+	.page {
+		position: absolute;
+		padding: 0;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		background: #000;
+	}
+	.row {
+		margin: 0;
+	}
+	.col {
+		padding: 5px 10px;
+		display: block;
+		width: auto;
+	}
+	.sidebar,
+	.main {
+		position: absolute;
+		height: 100%;
+		overflow: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+	.sidebar {
+		float: none;
+		width: 280px;
+		left: -70px;
+		opacity: 0;
+	}
+	.sidebar_nav {
+		margin: 0;
+	}
+	.main {
+		display: block;
+		width: 100%;
+		background: #fff;
 	}
 }
 </style>
@@ -60,15 +107,7 @@ html {
 <div class="page">
 	<div class="sidebar">
 		<div class="sidebar_nav">
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-			proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-			cillum dolore eu fugiat nulla pariatur.
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 		</div>
 	</div>
 	<div class="main">
@@ -128,7 +167,72 @@ html {
 </div>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script>
+var $main = $(".main");
+var $sidebar = $(".sidebar");
+var duration = ".4s";
+var expandWidth = "280";//$(window).width() * .8;
+var baseX = 0;
+var startX, startY, deltaX, deltaY, relativeX, isswipe, swiping;
 
+function touchstart(e) {
+	// e.preventDefault(); // remove later
+	if (e.originalEvent.touches.length === 1) {
+		startX = e.originalEvent.touches[0].pageX;
+		startY = e.originalEvent.touches[0].pageY;
+		$main.on("touchmove", touchmove).one("touchend", touchend);
+	}
+}
+
+function touchmove(e) {
+	deltaX = startX - e.originalEvent.touches[0].pageX;
+	deltaY = startY - e.originalEvent.touches[0].pageY;
+	relativeX = baseX - deltaX;
+	if (Math.abs(deltaX) > Math.max(10, Math.abs(deltaY))) {
+		e.preventDefault();
+		e.stopPropagation();
+		isswipe = swiping = true;
+	} else {
+		isswipe = false;
+	}
+	if (swiping && relativeX > 0 && relativeX < 280) {
+		moveBy(relativeX, true)
+	}
+}
+
+function touchend(e) {
+	if (isswipe) {
+		deltaX > 0 ? open() : close();
+	} else {
+		// if swipe treshold is not reached, transition back if X != 0, but don't turn transition on if we landed directly on X == 0
+		moveBy(baseX, !deltaX);
+	}
+	isswipe = swiping = false;
+	$main.off("touchmove", touchmove);
+}
+
+function moveBy(deltaX, noTransition) {
+	$main.css({
+		transform: "translate3d(" + deltaX + "px,0,0)",
+		transition: noTransition ? "none" : "all " + duration
+	});
+	$sidebar.css({
+		transform: "translate3d(" + (deltaX)/4 + "px,0,0)",
+		opacity: deltaX / expandWidth,
+		transition: noTransition ? "none" : "all " + duration
+	});
+}
+
+function open() {
+	baseX = 0;
+	moveBy(0);
+}
+
+function close() {
+	baseX = expandWidth;
+	moveBy(expandWidth);
+}
+
+$main.on("touchstart", touchstart);
 </script>
 </body>
 </html>
