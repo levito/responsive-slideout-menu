@@ -170,9 +170,10 @@ body {
 var $main = $(".main");
 var $sidebar = $(".sidebar");
 var duration = ".4s";
-var expandWidth = "280";//$(window).width() * .8;
+var expandW = 280;
+var tresholdW = 20;
 var baseX = 0;
-var startX, startY, deltaX, deltaY, relativeX, isflick, swiping, isswipe;
+var startX, startY, deltaX, deltaY, relativeX, isSwipe;
 
 function touchstart(e) {
 	// e.preventDefault(); // remove later
@@ -180,10 +181,9 @@ function touchstart(e) {
 		startX = e.originalEvent.touches[0].pageX;
 		startY = e.originalEvent.touches[0].pageY;
 		$main.on("touchmove", touchmove).one("touchend", touchend);
-		isswipe = false;
+		tresholdW = 10;
 		setTimeout(function() {
-			isflick = false
-			isswipe = true;
+			tresholdW = expandW / 2;
 		}, 500);
 	}
 }
@@ -192,27 +192,24 @@ function touchmove(e) {
 	deltaX = startX - e.originalEvent.touches[0].pageX;
 	deltaY = startY - e.originalEvent.touches[0].pageY;
 	relativeX = baseX - deltaX;
-	if (Math.abs(deltaX) > Math.max(10, Math.abs(deltaY))) {
+	if (Math.abs(deltaX) > Math.max(tresholdW, Math.abs(deltaY))) {
 		e.preventDefault();
 		e.stopPropagation();
-		isflick = swiping = true;
-	} else {
-		isflick = false;
+		isSwipe = true;
 	}
-	if (swiping && relativeX > 0 && relativeX < 280) {
+	if (isSwipe && relativeX > 0 && relativeX < expandW) {
 		moveBy(relativeX, true)
 	}
 }
 
 function touchend(e) {
-	if (isflick || (isswipe && (Math.abs(deltaX) > (expandWidth/2)))) {
-		console.log(isswipe, Math.abs(deltaX), expandWidth/2);
+	if (isSwipe && (Math.abs(deltaX) > tresholdW)) {
 		deltaX > 0 ? open() : close();
 	} else {
 		// if swipe treshold is not reached, transition back if X != 0, but don't turn transition on if we landed directly on X == 0
 		moveBy(baseX, !deltaX);
 	}
-	isflick = swiping = false;
+	isSwipe = false;
 	$main.off("touchmove", touchmove);
 }
 
@@ -223,7 +220,7 @@ function moveBy(deltaX, noTransition) {
 	});
 	$sidebar.css({
 		transform: "translate3d(" + (deltaX)/4 + "px,0,0)",
-		opacity: deltaX / expandWidth,
+		opacity: deltaX / expandW,
 		transition: noTransition ? "none" : "all " + duration
 	});
 }
@@ -234,8 +231,8 @@ function open() {
 }
 
 function close() {
-	baseX = expandWidth;
-	moveBy(expandWidth);
+	baseX = expandW;
+	moveBy(expandW);
 }
 
 $main.on("touchstart", touchstart);
