@@ -52,17 +52,23 @@ body {
 	text-align: center;
 }
 
-@media screen and (max-width:1023px) {
+/* e.g. tablet portrait */
+@media screen and (max-width: 1000px) {
 	.page {
 		width: 556px;
 	}
 }
-@media screen and (max-width: 767px) {
+
+/* e.g. phone landscape */
+@media screen and (max-width: 600px) {
 	.page {
+		padding: 15px;
 		width: 364px;
 	}
 }
-@media screen and (max-width: 479px) {
+
+/* e.g. phone portrait */
+@media screen and (max-width: 400px) {
 	.page {
 		position: absolute;
 		padding: 0;
@@ -107,7 +113,10 @@ body {
 <div class="page">
 	<div class="sidebar">
 		<div class="sidebar_nav">
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
 		</div>
 	</div>
 	<div class="main">
@@ -167,75 +176,95 @@ body {
 </div>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script>
-var $main = $(".main");
-var $sidebar = $(".sidebar");
-var duration = ".4s";
-var expandW = 280;
-var tresholdW = 20;
-var baseX = 0;
-var startX, startY, deltaX, deltaY, relativeX, isSwipe;
+var Slideout = function($node) {
+	var module = this;
+	var $main = $node.find(".main");
+	var $sidebar = $node.find(".sidebar");
+	var duration = ".4s";
+	var expandW = 280;
+	var tresholdW = 10;
+	var baseX = 0;
+	var startX, startY, deltaX, deltaY, absX, isSwipe, isOpened;
 
-function touchstart(e) {
-	// e.preventDefault(); // remove later
-	if (e.originalEvent.touches.length === 1) {
-		startX = e.originalEvent.touches[0].pageX;
-		startY = e.originalEvent.touches[0].pageY;
-		$main.on("touchmove", touchmove).one("touchend", touchend);
+	function touchstart(e) {
+		e.preventDefault(); // for testing on desktop; remove later
+		isOpened && e.preventDefault();
 		tresholdW = 10;
-		setTimeout(function() {
-			tresholdW = expandW / 2;
-		}, 500);
+		if (e.originalEvent.touches.length === 1) {
+			// don't allow scrolling in main if sidebar is opened
+			startX = e.originalEvent.touches[0].pageX;
+			startY = e.originalEvent.touches[0].pageY;
+			$main.on("touchmove", touchmove).one("touchend", touchend);
+			setTimeout(function() {
+				tresholdW = expandW / 2;
+			}, 500);
+		}
 	}
-}
 
-function touchmove(e) {
-	deltaX = startX - e.originalEvent.touches[0].pageX;
-	deltaY = startY - e.originalEvent.touches[0].pageY;
-	relativeX = baseX - deltaX;
-	if (Math.abs(deltaX) > Math.max(tresholdW, Math.abs(deltaY))) {
-		e.preventDefault();
-		e.stopPropagation();
-		isSwipe = true;
+	function touchmove(e) {
+		deltaX = startX - e.originalEvent.touches[0].pageX;
+		deltaY = startY - e.originalEvent.touches[0].pageY;
+		absX = baseX - deltaX;
+		if (Math.abs(deltaX) > Math.max(tresholdW, Math.abs(deltaY))) {
+			e.preventDefault();
+			e.stopPropagation();
+			isSwipe = true;
+		}
+		if (isSwipe && (absX >= 0) && (absX <= expandW)) {
+			moveBy(absX, true)
+		}
 	}
-	if (isSwipe && relativeX > 0 && relativeX < expandW) {
-		moveBy(relativeX, true)
+
+	function touchend(e) {
+		if (isSwipe && (Math.abs(deltaX) > tresholdW)) {
+			deltaX < 0 ? module.open() : module.close();
+		} else {
+			// if swipe treshold is not reached, transition back if X != 0,
+			// but don't turn transition on if we landed directly on X == 0
+			moveBy(baseX, !deltaX);
+			isOpened && !isSwipe &&  module.close(); // close on tap
+		}
+		isSwipe = false;
+		$main.off("touchmove", touchmove);
 	}
-}
 
-function touchend(e) {
-	if (isSwipe && (Math.abs(deltaX) > tresholdW)) {
-		deltaX > 0 ? open() : close();
-	} else {
-		// if swipe treshold is not reached, transition back if X != 0, but don't turn transition on if we landed directly on X == 0
-		moveBy(baseX, !deltaX);
+	function moveBy(deltaX, instantly) {
+		$main.css({
+			transform: "translate3d(" + deltaX + "px,0,0)",
+			transition: instantly ? "none" : "all " + duration
+		});
+		$sidebar.css({
+			transform: "translate3d(" + (deltaX)/4 + "px,0,0)",
+			opacity: deltaX / expandW,
+			transition: instantly ? "none" : "all " + duration
+		});
 	}
-	isSwipe = false;
-	$main.off("touchmove", touchmove);
-}
 
-function moveBy(deltaX, noTransition) {
-	$main.css({
-		transform: "translate3d(" + deltaX + "px,0,0)",
-		transition: noTransition ? "none" : "all " + duration
-	});
-	$sidebar.css({
-		transform: "translate3d(" + (deltaX)/4 + "px,0,0)",
-		opacity: deltaX / expandW,
-		transition: noTransition ? "none" : "all " + duration
-	});
-}
+	module.open = function(instantly) {
+		baseX = expandW;
+		isOpened = true;
+		moveBy(expandW, instantly);
+	}
 
-function open() {
-	baseX = 0;
-	moveBy(0);
-}
+	module.close = function(instantly) {
+		baseX = 0;
+		isOpened = false;
+		moveBy(0, instantly);
+	}
 
-function close() {
-	baseX = expandW;
-	moveBy(expandW);
+	$(window).on("resize", function() {
+		if (document.documentElement.clientWidth <= 400) {
+			$main.on("touchstart", touchstart);
+			isOpened && module.open(true);
+		} else {
+			$main.off("touchstart", touchstart);
+			$main.add($sidebar).removeAttr("style");
+		}
+	}).trigger("resize");
 }
-
-$main.on("touchstart", touchstart);
+$(document).ready(function() {
+	window.slideout = new Slideout($(".page"));
+});
 </script>
 </body>
 </html>
