@@ -52,6 +52,10 @@ body {
 	text-align: center;
 }
 
+.button-expand {
+	display: none;
+}
+
 /* e.g. tablet portrait */
 @media screen and (max-width: 1000px) {
 	.page {
@@ -95,8 +99,9 @@ body {
 	}
 	.sidebar {
 		float: none;
+		-moz-box-sizing: border-box;
 		box-sizing: border-box;
-		padding-right: 50px;
+		padding-right: 60px;
 		left: -100px;
 		opacity: 0;
 	}
@@ -107,11 +112,27 @@ body {
 		display: block;
 		background: #fff;
 	}
+	.button-expand {
+		position: fixed;
+		z-index: 1;
+		bottom: 0;
+		left: 0;
+		display: block;
+		width: 50px;
+		height: 50px;
+		padding: 5px;
+		background: #333;
+		color: #ccc;
+		font-size: 50px;
+		line-height: 1;
+		text-align: center;
+	}
 }
 </style>
 </head>
 <body>
 <div class="page">
+	<span class="button-expand">&#x2261;</span>
 	<div class="sidebar">
 		<div class="sidebar_nav">
 			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
@@ -179,12 +200,15 @@ body {
 <script>
 var Slideout = function($node) {
 	var module = this;
-	var $main = $node.find(".main");
+	var $button = $node.find(".button-expand");
 	var $sidebar = $node.find(".sidebar");
+	var $main = $node.find(".main").add($button);
 	var duration = ".4s";
 	var moveTresholdW = endTresholdW = 10;
 	var baseX = 0;
-	var startX, startY, deltaX, deltaY, absX, expandW, slideinW, isSwipe, isOpened, tresholdTimer;
+	var sidebarPadding = parseInt($sidebar.css("padding-right"), 10);
+	var slideinW = -parseInt($sidebar.css("left"), 10);
+	var startX, startY, deltaX, deltaY, absX, expandW, isSwipe, isOpened, tresholdTimer;
 
 	function touchstart(e) {
 		// e.preventDefault(); // for testing on desktop; remove later
@@ -254,11 +278,15 @@ var Slideout = function($node) {
 		moveBy(0, instantly);
 	}
 
+	$button.on("click", function() {
+		if (isSwipe) return;
+		isOpened ? module.close() : module.open();
+	});
+
 	$(window).on("resize", function() {
 		$main.off("touchstart", touchstart);
 		if (document.documentElement.clientWidth <= 400) {
-			expandW = document.documentElement.clientWidth - 50;
-			slideinW = -parseInt($sidebar.css("left"), 10)
+			expandW = document.documentElement.clientWidth - sidebarPadding;
 			$main.on("touchstart", touchstart);
 			isOpened && module.open(true);
 		} else {
