@@ -238,7 +238,6 @@ var Slideout = function($node) {
 	}
 
 	function touchend(e) {
-		console.log(deltaX, endTresholdW);
 		if (isSwipe && (Math.abs(deltaX) > endTresholdW)) {
 			deltaX < 0 ? module.open() : module.close();
 		} else {
