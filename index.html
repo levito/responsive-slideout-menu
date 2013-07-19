@@ -88,14 +88,16 @@ body {
 	.sidebar,
 	.main {
 		position: absolute;
+		width: 100%;
 		height: 100%;
 		overflow: auto;
 		-webkit-overflow-scrolling: touch;
 	}
 	.sidebar {
 		float: none;
-		width: 280px;
-		left: -70px;
+		box-sizing: border-box;
+		padding-right: 50px;
+		left: -100px;
 		opacity: 0;
 	}
 	.sidebar_nav {
@@ -103,7 +105,6 @@ body {
 	}
 	.main {
 		display: block;
-		width: 100%;
 		background: #fff;
 	}
 }
@@ -181,10 +182,9 @@ var Slideout = function($node) {
 	var $main = $node.find(".main");
 	var $sidebar = $node.find(".sidebar");
 	var duration = ".4s";
-	var expandW = 280;
 	var moveTresholdW = endTresholdW = 10;
 	var baseX = 0;
-	var startX, startY, deltaX, deltaY, absX, isSwipe, isOpened, tresholdTimer;
+	var startX, startY, deltaX, deltaY, absX, expandW, slideinW, isSwipe, isOpened, tresholdTimer;
 
 	function touchstart(e) {
 		// e.preventDefault(); // for testing on desktop; remove later
@@ -216,6 +216,7 @@ var Slideout = function($node) {
 	}
 
 	function touchend(e) {
+		console.log(deltaX, endTresholdW);
 		if (isSwipe && (Math.abs(deltaX) > endTresholdW)) {
 			deltaX < 0 ? module.open() : module.close();
 		} else {
@@ -235,7 +236,7 @@ var Slideout = function($node) {
 			transition: instantly ? "none" : "all " + duration
 		});
 		$sidebar.css({
-			transform: "translate3d(" + (deltaX)/4 + "px,0,0)",
+			transform: "translate3d(" + (deltaX / expandW * slideinW) + "px,0,0)",
 			opacity: deltaX / expandW,
 			transition: instantly ? "none" : "all " + duration
 		});
@@ -254,11 +255,13 @@ var Slideout = function($node) {
 	}
 
 	$(window).on("resize", function() {
+		$main.off("touchstart", touchstart);
 		if (document.documentElement.clientWidth <= 400) {
+			expandW = document.documentElement.clientWidth - 50;
+			slideinW = -parseInt($sidebar.css("left"), 10)
 			$main.on("touchstart", touchstart);
 			isOpened && module.open(true);
 		} else {
-			$main.off("touchstart", touchstart);
 			$main.add($sidebar).removeAttr("style");
 		}
 	}).trigger("resize");
