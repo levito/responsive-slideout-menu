@@ -206,12 +206,10 @@ var Slideout = function($node) {
 	var duration = ".4s";
 	var moveTresholdW = endTresholdW = 10;
 	var baseX = 0;
-	var sidebarPadding = parseInt($sidebar.css("padding-right"), 10);
-	var slideinW = -parseInt($sidebar.css("left"), 10);
-	var startX, startY, deltaX, deltaY, absX, expandW, isSwipe, isOpened, tresholdTimer;
+	var startX, startY, deltaX, deltaY, absX, expandW, slideinW, isSwipe, isOpened, tresholdTimer;
 
 	function touchstart(e) {
-		// e.preventDefault(); // for testing on desktop; remove later
+		e.preventDefault(); // for testing on desktop; remove later
 		if (e.originalEvent.touches.length === 1) {
 			// don't allow scrolling in main if sidebar is opened
 			isOpened && e.preventDefault();
@@ -286,7 +284,8 @@ var Slideout = function($node) {
 	$(window).on("resize", function() {
 		$main.off("touchstart", touchstart);
 		if (document.documentElement.clientWidth <= 400) {
-			expandW = document.documentElement.clientWidth - sidebarPadding;
+			expandW = document.documentElement.clientWidth - parseInt($sidebar.css("padding-right"), 10);
+			slideinW = -parseInt($sidebar.css("left"), 10);
 			$main.on("touchstart", touchstart);
 			isOpened && module.open(true);
 		} else {
