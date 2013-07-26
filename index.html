@@ -196,7 +196,8 @@ body {
 		</div>
 	</div>
 </div>
-<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<!-- <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script> -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script>
 <script>
 var Slideout = function($node) {
 	var module = this;
@@ -209,23 +210,25 @@ var Slideout = function($node) {
 	var startX, startY, deltaX, deltaY, absX, expandW, slideinW, isSwipe, isOpened, tresholdTimer;
 
 	function touchstart(e) {
-		e.preventDefault(); // for testing on desktop; remove later
-		if (e.originalEvent.touches.length === 1) {
+		// e.preventDefault(); // for testing on desktop; remove later
+		var oe = e.originalEvent || e; // zepto uses e
+		if (oe.touches.length === 1) {
 			// don't allow scrolling in main if sidebar is opened
 			isOpened && e.preventDefault();
 			endTresholdW = moveTresholdW;
-			tresholdTimer = setTimeout(function() {
+			tresholdTimer = setTimeout(function() {
 				endTresholdW = expandW / 2;
 			}, 500);
-			startX = e.originalEvent.touches[0].pageX;
-			startY = e.originalEvent.touches[0].pageY;
+			startX = oe.touches[0].pageX;
+			startY = oe.touches[0].pageY;
 			$main.on("touchmove", touchmove).one("touchend", touchend);
 		}
 	}
 
 	function touchmove(e) {
-		deltaX = startX - e.originalEvent.touches[0].pageX;
-		deltaY = startY - e.originalEvent.touches[0].pageY;
+		var oe = e.originalEvent || e; // zepto uses e
+		deltaX = startX - oe.touches[0].pageX;
+		deltaY = startY - oe.touches[0].pageY;
 		absX = baseX - deltaX;
 		if (Math.abs(deltaX) > Math.max(moveTresholdW, Math.abs(deltaY))) {
 			e.preventDefault();
@@ -253,12 +256,16 @@ var Slideout = function($node) {
 
 	function moveBy(deltaX, instantly) {
 		$main.css({
+			"-webkit-transform": "translate3d(" + deltaX + "px,0,0)", // zepto...
 			transform: "translate3d(" + deltaX + "px,0,0)",
+			"-webkit-transition": instantly ? "none" : "all " + duration,
 			transition: instantly ? "none" : "all " + duration
 		});
 		$sidebar.css({
+			"-webkit-transform": "translate3d(" + (deltaX / expandW * slideinW) + "px,0,0)", // zepto...
 			transform: "translate3d(" + (deltaX / expandW * slideinW) + "px,0,0)",
 			opacity: deltaX / expandW,
+			"-webkit-transition": instantly ? "none" : "all " + duration,
 			transition: instantly ? "none" : "all " + duration
 		});
 	}
