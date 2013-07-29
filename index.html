@@ -127,10 +127,17 @@ body {
 		line-height: 1;
 		text-align: center;
 	}
+
+	#log {
+		position: absolute;
+		z-index: 10;
+		background: #fcc;
+	}
 }
 </style>
 </head>
 <body>
+<div id="log"></div>
 <div class="page">
 	<span class="button-expand">&#x2261;</span>
 	<div class="sidebar">
@@ -196,10 +203,13 @@ body {
 		</div>
 	</div>
 </div>
-<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script> -->
+<!-- <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script> -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script>
 <script>
 var Slideout = function($node) {
+
+	var $log = $("#log");
+
 	var module = this;
 	var $button = $node.find(".button-expand");
 	var $sidebar = $node.find(".sidebar");
@@ -210,6 +220,7 @@ var Slideout = function($node) {
 	var startX, startY, deltaX, deltaY, absX, expandW, slideinW, isSwipe, isOpened, tresholdTimer;
 
 	function touchstart(e) {
+		$log.prepend("start<br/>")
 		// e.preventDefault(); // for testing on desktop; remove later
 		var oe = e.originalEvent || e; // zepto uses e
 		if (oe.touches.length === 1) {
@@ -226,6 +237,7 @@ var Slideout = function($node) {
 	}
 
 	function touchmove(e) {
+		//$log.append("move<br/>")
 		var oe = e.originalEvent || e; // zepto uses e
 		deltaX = startX - oe.touches[0].pageX;
 		deltaY = startY - oe.touches[0].pageY;
@@ -241,22 +253,25 @@ var Slideout = function($node) {
 	}
 
 	function touchend(e) {
-		if (isSwipe && (Math.abs(deltaX) > endTresholdW)) {
-			deltaX < 0 ? module.open() : module.close();
+		$log.prepend("end<br/>")
+		if (isSwipe) {
+			if (Math.abs(deltaX) > endTresholdW) {
+				deltaX < 0 ? module.open() : module.close();
+			} else {
+				// if swipe treshold is not reached, transition back if X != 0,
+				// but don't turn transition on if we landed directly on X == 0
+				moveBy(baseX, !deltaX);
+			}
 		} else {
-			// if swipe treshold is not reached, transition back if X != 0,
-			// but don't turn transition on if we landed directly on X == 0
-			moveBy(baseX, !deltaX);
-			if (isOpened && !isSwipe) {
+			if (isOpened) {
 				module.close(); // close on tap main or button
-			} else if (!isOpened && !isSwipe && $button.is(e.target)) { // open on tap button
-				console.log($button.is(e.target));
-				module.open();
+			} else if ($button.hasClass(e.target.className)) { // zepto has no $.is
+				module.open(); // open on tap button
 			}
 		}
 		isSwipe = false;
 		clearTimeout(tresholdTimer);
-		$main.off("touchmove", touchmove);
+		$main.off("touchmove", touchmove).one("touchstart", touchstart);
 	}
 
 	function moveBy(deltaX, instantly) {
@@ -288,11 +303,12 @@ var Slideout = function($node) {
 	}
 
 	$(window).on("resize", function() {
+		$log.prepend("resize<br/>")
 		$main.off("touchstart", touchstart);
 		if (document.documentElement.clientWidth <= 400) {
 			expandW = document.documentElement.clientWidth - parseInt($sidebar.css("padding-right"), 10);
 			slideinW = -parseInt($sidebar.css("left"), 10);
-			$main.on("touchstart", touchstart);
+			$main.one("touchstart", touchstart);
 			isOpened && module.open(true);
 		} else {
 			$main.add($sidebar).removeAttr("style");
