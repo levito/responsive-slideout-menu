@@ -52,7 +52,7 @@ body {
 	text-align: center;
 }
 
-.page > label,
+.button-expand,
 #sidebarToggle {
 	display: none;
 }
@@ -85,7 +85,8 @@ body {
 		width: auto;
 	}
 	.sidebar,
-	.main {
+	.main,
+	.button-expand {
 		position: absolute;
 		height: 100%;
 		overflow: auto;
@@ -112,37 +113,44 @@ body {
 		left: 0;
 		opacity: 1;
 	}
-	#sidebarToggle:checked ~ .main  {
+	#sidebarToggle:checked ~ .main,
+	#sidebarToggle:checked ~ .button-expand  {
 		left: 280px;
 	}
 
-	.page > label,
+	.button-expand,
 	#sidebarToggle {
 		display: block;
 		position: absolute;
-	}
-	.page > label {
 		z-index: 1;
 		bottom: 0;
 		left: 0;
-		width: 100px;
-		height: 20px;
-		padding: 10px;
-		background: #693;
-		color: #fff;
+		width: 50px;
+		height: 50px;
+		padding: 5px;
+		background: #333;
+		color: #ccc;
+		font-size: 50px;
+		line-height: 1;
 		text-align: center;
 		cursor: pointer;
 	}
 	#sidebarToggle {
-		left: -999px;
+		z-index: 2;
+		/* opacity: 0; */
+	}
+
+	.no-transition {
+		-webkit-transition: none;
+		transition: none;
 	}
 }
 </style>
 </head>
 <body>
 <div class="page">
-	<label for="sidebarToggle">toggle sidebar</label>
 	<input type="checkbox" id="sidebarToggle">
+	<label for="sidebarToggle" class="button-expand">&#x2261;</label>
 	<div class="sidebar">
 		<div class="sidebar_nav">
 			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
@@ -205,59 +213,109 @@ body {
 </div>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script>
-var $main = $(".main");
-var $sidebar = $(".sidebar");
-var $toggle = $("#sidebarToggle");
-var expandW = 280;
-var startX, startY, deltaX, deltaY, tresholdW, isSwipe, opacity;
+var Slideout = function($node) {
+	var module = this;
+	var $toggle = $node.find("#sidebarToggle");
+	var $button = $node.find(".button-expand")
+	var $sidebar = $node.find(".sidebar");
+	var $main = $node.find(".main").add($button).add($toggle);
+	var duration = ".4s";
+	var moveTresholdW = endTresholdW = 10;
+	var expandW = 280;
+	var isOpened = $toggle.prop("checked") | 0;
+	var transitionend = "transitionend transitionEnd msTransitionEnd oTransitionEnd webkitTransitionEnd";
+	var startX, startY, deltaX, deltaY, tresholdW, isSwipe, tresholdTimer;
 
-function touchstart(e) {
-	// e.preventDefault(); // remove later
-	if (e.originalEvent.touches.length === 1) {
-		startX = e.originalEvent.touches[0].pageX;
-		startY = e.originalEvent.touches[0].pageY;
-		$main.on("touchmove", touchmove).one("touchend", touchend);
-		tresholdW = 10;
-		setTimeout(function() {
-			tresholdW = expandW / 2;
-		}, 500);
+	function isOpened() {
+		return $toggle.prop("checked");
 	}
-	opacity = $toggle.is(":checked") | 0; // true => 1, false => 0
-}
 
-function touchmove(e) {
-	deltaX = startX - e.originalEvent.touches[0].pageX;
-	deltaY = startY - e.originalEvent.touches[0].pageY;
-	if (Math.abs(deltaX) > Math.max(tresholdW, Math.abs(deltaY))) {
-		e.preventDefault();
-		e.stopPropagation();
-		isSwipe = true;
+	function touchstart(e) {
+		// e.preventDefault(); // remove later
+		var oe = e.originalEvent || e; // zepto uses e
+		isOpened = $toggle.prop("checked") | 0; // true => 1, false => 0
+		if (oe.touches.length === 1) {
+			// don't allow scrolling in main if sidebar is opened
+			isOpened && e.preventDefault();
+			endTresholdW = moveTresholdW;
+			tresholdTimer = setTimeout(function() {
+				endTresholdW = expandW / 2;
+			}, 500);
+			startX = oe.touches[0].pageX;
+			startY = oe.touches[0].pageY;
+			$main.on("touchmove", touchmove).one("touchend", touchend);
+		}
 	}
-	isSwipe && moveBy(-deltaX);
-}
 
-function touchend(e) {
-	if (isSwipe && (Math.abs(deltaX) > tresholdW)) {
-		$toggle.prop("checked", deltaX < 0);
+	function touchmove(e) {
+		var oe = e.originalEvent || e; // zepto uses e
+		deltaX = oe.touches[0].pageX - startX;
+		deltaY = oe.touches[0].pageY - startY;
+		if (Math.abs(deltaX) > Math.max(moveTresholdW, Math.abs(deltaY))) {
+			e.preventDefault();
+			e.stopPropagation();
+			isSwipe = true;
+		}
+		if (isSwipe && (deltaX >= 0 - expandW * isOpened) && (deltaX <= expandW - expandW * isOpened)) {
+			moveBy(deltaX, true);
+		}
 	}
-	isSwipe = false;
-	$main.add($sidebar).removeAttr("style");
-	$main.off("touchmove", touchmove);
-}
 
-function moveBy(deltaX) {
-	$main.css({
-		transform: "translate3d(" + deltaX + "px,0,0)",
-		transition: "none"
-	});
-	$sidebar.css({
-		transform: "translate3d(" + (deltaX/4) + "px,0,0)",
-		opacity: opacity + deltaX / expandW,
-		transition: "none"
-	});
-}
+	function touchend(e) {
+		if (isSwipe && (Math.abs(deltaX) > endTresholdW)) {
+			deltaX > 0 ? module.open() : module.close();
+		} else {
+			$main.off(transitionend).add($sidebar).removeAttr("style")
+			isOpened && !isSwipe && module.close(); // close on tap
+		}
+		isSwipe = false;
+		clearTimeout(tresholdTimer);
+		$main.off("touchmove", touchmove);
+	}
 
-$main.on("touchstart", touchstart);
+	function moveBy(deltaX, instantly) {
+		$main.css({
+			"-webkit-transform": "translate3d(" + deltaX + "px,0,0)", // zepto...
+			transform: "translate3d(" + deltaX + "px,0,0)",
+			"-webkit-transition": instantly ? "none" : "all " + duration,
+			transition: instantly ? "none" : "all " + duration
+		});
+		$sidebar.css({
+			"-webkit-transform": "translate3d(" + (deltaX/4) + "px,0,0)",
+			transform: "translate3d(" + (deltaX/4) + "px,0,0)",
+			opacity: isOpened + deltaX / expandW,
+			"-webkit-transition": instantly ? "none" : "all " + duration,
+			transition: instantly ? "none" : "all " + duration
+		});
+	}
+
+	function finishMove() {
+		$main.one(transitionend, function() {
+			$main.add($sidebar).removeAttr("style").addClass("no-transition");
+			$toggle.prop("checked", deltaX > 0);
+			setTimeout(function() {
+				$main.add($sidebar).removeClass("no-transition");
+			}, 20);
+		});
+	}
+
+	module.open = function() {
+		if (isOpened) return;
+		moveBy(expandW);
+		finishMove();
+	}
+
+	module.close = function() {
+		if (!isOpened) return;
+		moveBy(-expandW);
+		finishMove();
+	}
+
+	$main.on("touchstart", touchstart);
+}
+$(document).ready(function() {
+	window.slideout = new Slideout($(".page"));
+});
 </script>
 </body>
 </html>
