@@ -113,7 +113,7 @@ body {
 		background: #fff;
 	}
 	.button-expand {
-		position: fixed;
+		position: absolute;
 		z-index: 1;
 		bottom: 0;
 		left: 0;
@@ -196,8 +196,8 @@ body {
 		</div>
 	</div>
 </div>
-<!-- <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script> -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script> -->
 <script>
 var Slideout = function($node) {
 	var module = this;
@@ -247,7 +247,12 @@ var Slideout = function($node) {
 			// if swipe treshold is not reached, transition back if X != 0,
 			// but don't turn transition on if we landed directly on X == 0
 			moveBy(baseX, !deltaX);
-			isOpened && !isSwipe && module.close(); // close on tap
+			if (isOpened && !isSwipe) {
+				module.close(); // close on tap main or button
+			} else if (!isOpened && !isSwipe && $button.is(e.target)) { // open on tap button
+				console.log($button.is(e.target));
+				module.open();
+			}
 		}
 		isSwipe = false;
 		clearTimeout(tresholdTimer);
@@ -281,11 +286,6 @@ var Slideout = function($node) {
 		isOpened = false;
 		moveBy(0, instantly);
 	}
-
-	$button.on("click", function() {
-		if (isSwipe) return;
-		isOpened ? module.close() : module.open();
-	});
 
 	$(window).on("resize", function() {
 		$main.off("touchstart", touchstart);
