@@ -127,19 +127,13 @@ body {
 		line-height: 1;
 		text-align: center;
 	}
-
-	#log {
-		position: absolute;
-		z-index: 10;
-		background: #fcc;
-	}
 }
 </style>
 </head>
 <body>
 <div id="log"></div>
 <div class="page">
-	<span class="button-expand">&#x2261;</span>
+	<span class="button-expand js_touch">&#x2261;</span>
 	<div class="sidebar">
 		<div class="sidebar_nav">
 			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
@@ -148,7 +142,7 @@ body {
 			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
 		</div>
 	</div>
-	<div class="main">
+	<div class="main js_touch">
 		<div class="row">
 			<div class="col">
 				<div class="mod">
@@ -203,13 +197,10 @@ body {
 		</div>
 	</div>
 </div>
-<!-- <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script> -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<!-- <script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script> -->
 <script>
 var Slideout = function($node) {
-
-	var $log = $("#log");
-
 	var module = this;
 	var $button = $node.find(".button-expand");
 	var $sidebar = $node.find(".sidebar");
@@ -220,24 +211,22 @@ var Slideout = function($node) {
 	var startX, startY, deltaX, deltaY, absX, expandW, slideinW, isSwipe, isOpened, tresholdTimer;
 
 	function touchstart(e) {
-		$log.prepend("start<br/>")
 		// e.preventDefault(); // for testing on desktop; remove later
 		var oe = e.originalEvent || e; // zepto uses e
-		if (oe.touches.length === 1) {
+		if (oe.touches.length == 1) {
 			// don't allow scrolling in main if sidebar is opened
 			isOpened && e.preventDefault();
 			endTresholdW = moveTresholdW;
 			tresholdTimer = setTimeout(function() {
-				endTresholdW = expandW / 2;
+				endTresholdW = expandW / 3;
 			}, 500);
 			startX = oe.touches[0].pageX;
 			startY = oe.touches[0].pageY;
-			$main.on("touchmove", touchmove).one("touchend", touchend);
+			$node.on("touchmove", ".js_touch", touchmove).one("touchend", ".js_touch", touchend);
 		}
 	}
 
 	function touchmove(e) {
-		//$log.append("move<br/>")
 		var oe = e.originalEvent || e; // zepto uses e
 		deltaX = startX - oe.touches[0].pageX;
 		deltaY = startY - oe.touches[0].pageY;
@@ -253,7 +242,6 @@ var Slideout = function($node) {
 	}
 
 	function touchend(e) {
-		$log.prepend("end<br/>")
 		if (isSwipe) {
 			if (Math.abs(deltaX) > endTresholdW) {
 				deltaX < 0 ? module.open() : module.close();
@@ -271,7 +259,7 @@ var Slideout = function($node) {
 		}
 		isSwipe = false;
 		clearTimeout(tresholdTimer);
-		$main.off("touchmove", touchmove).one("touchstart", touchstart);
+		$node.off("touchmove", ".js_touch", touchmove);
 	}
 
 	function moveBy(deltaX, instantly) {
@@ -303,12 +291,11 @@ var Slideout = function($node) {
 	}
 
 	$(window).on("resize", function() {
-		$log.prepend("resize<br/>")
-		$main.off("touchstart", touchstart);
+		$node.off("touchstart", ".js_touch", touchstart);
 		if (document.documentElement.clientWidth <= 400) {
 			expandW = document.documentElement.clientWidth - parseInt($sidebar.css("padding-right"), 10);
 			slideinW = -parseInt($sidebar.css("left"), 10);
-			$main.one("touchstart", touchstart);
+			$node.on("touchstart", ".js_touch", touchstart);
 			isOpened && module.open(true);
 		} else {
 			$main.add($sidebar).removeAttr("style");
