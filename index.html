@@ -57,17 +57,17 @@ body {
 	display: none;
 }
 
-@media screen and (max-width:1023px) {
+@media screen and (max-width: 1000px) {
 	.page {
 		width: 556px;
 	}
 }
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 600px) {
 	.page {
 		width: 364px;
 	}
 }
-@media screen and (max-width: 479px) {
+@media screen and (max-width: 400px) {
 	.page {
 		position: absolute;
 		padding: 0;
@@ -85,14 +85,18 @@ body {
 		width: auto;
 	}
 	.sidebar,
+	.main,
+	.button-expand {
+		-webkit-transition: all .4s;
+		transition: all .4s;
+	}
+	.sidebar,
 	.main {
 		position: absolute;
 		width: 100%;
 		height: 100%;
 		overflow: auto;
 		-webkit-overflow-scrolling: touch;
-		-webkit-transition: all .4s;
-		transition: all .4s;
 	}
 	.sidebar {
 		float: none;
@@ -132,6 +136,7 @@ body {
 	}
 	.is-opened .sidebar {
 		left: 0;
+		opacity: 1;
 	}
 
 	.no-transition {
@@ -212,13 +217,12 @@ var Slideout = function($node) {
 	var $toggle = $node.find("#sidebarToggle");
 	var $button = $node.find(".button-expand")
 	var $sidebar = $node.find(".sidebar");
-	var $main = $node.find(".main").add($button);
+	var $main = $node.find(".main");
 	var duration = ".4s";
 	var moveTresholdW = endTresholdW = 10;
-	var expandW = 280;
 	var isOpened = $node.hasClass("is-opened") | 0;
 	var transitionend = ({'WebkitTransition':'webkitTransitionEnd', 'OTransition':'oTransitionEnd', 'msTransition':'MSTransitionEnd'})[ Modernizr.prefixed('transition') ] || 'transitionend';
-	var startX, startY, deltaX, deltaY, tresholdW, isSwipe, tresholdTimer;
+	var startX, startY, deltaX, deltaY, expandW, slideinW, isSwipe, tresholdTimer;
 
 	function touchstart(e) {
 		// e.preventDefault(); // remove later
@@ -229,7 +233,7 @@ var Slideout = function($node) {
 			isOpened && e.preventDefault();
 			endTresholdW = moveTresholdW;
 			tresholdTimer = setTimeout(function() {
-				endTresholdW = expandW / 2;
+				endTresholdW = expandW / 3;
 			}, 500);
 			startX = oe.touches[0].pageX;
 			startY = oe.touches[0].pageY;
@@ -253,7 +257,7 @@ var Slideout = function($node) {
 
 	function touchend(e) {
 		if (isSwipe && (Math.abs(deltaX) > endTresholdW)) {
-			deltaX > 0 ? module.open() : module.close();
+			deltaX > 0 ? open() : close();
 		} else {
 			$main.add($sidebar).removeAttr("style")
 			isOpened && !isSwipe && module.close(); // close on tap
@@ -264,15 +268,15 @@ var Slideout = function($node) {
 	}
 
 	function moveBy(deltaX, instantly) {
-		$main.css({
+		$main.add($button).css({
 			"-webkit-transform": "translate3d(" + deltaX + "px,0,0)", // zepto...
 			transform: "translate3d(" + deltaX + "px,0,0)",
 			"-webkit-transition": instantly ? "none" : "all " + duration,
 			transition: instantly ? "none" : "all " + duration
 		});
 		$sidebar.css({
-			"-webkit-transform": "translate3d(" + (deltaX/4) + "px,0,0)",
-			transform: "translate3d(" + (deltaX/4) + "px,0,0)",
+			"-webkit-transform": "translate3d(" + (deltaX / expandW * slideinW) + "px,0,0)",
+			transform: "translate3d(" + (deltaX / expandW * slideinW) + "px,0,0)",
 			opacity: isOpened + deltaX / expandW,
 			"-webkit-transition": instantly ? "none" : "all " + duration,
 			transition: instantly ? "none" : "all " + duration
@@ -280,34 +284,39 @@ var Slideout = function($node) {
 	}
 
 	function finishMove() {
-		$sidebar.one(transitionend, function() {
-			console.log("end!");
-			$main.add($sidebar).removeAttr("style").addClass("no-transition");
+		$main.one(transitionend, function() {
+			$main.add($sidebar).add($button).removeAttr("style").addClass("no-transition");
 			$node.toggleClass("is-opened");
 			setTimeout(function() {
-				$main.add($sidebar).removeClass("no-transition");
-			}, 20);
+				$main.add($sidebar).add($button).removeClass("no-transition");
+			}, 0);
 		});
 	}
 
-	module.open = function() {
+	function open() {
 		if (isOpened) return;
 		moveBy(expandW);
 		finishMove();
 	}
 
-	module.close = function() {
+	function close() {
 		if (!isOpened) return;
 		moveBy(-expandW);
 		finishMove();
 	}
 
-	$button.on("click", function() {
-		if (isSwipe) return;
-		isOpened ? module.close() : module.open();
+	$button.on("touchend", function() {
+		$node.toggleClass("is-opened");
 	});
 
-	$main.on("touchstart", touchstart);
+	$(window).on("resize", function() {
+		$main.off("touchstart", touchstart);
+		if (document.documentElement.clientWidth <= 400) {
+			expandW = document.documentElement.clientWidth - parseInt($sidebar.css("padding-right"), 10);
+			slideinW = -parseInt($sidebar.css("left"), 10); // TODO: calculation doesn't work with opened sidebar
+			$main.on("touchstart", touchstart);
+		}
+	}).trigger("resize");
 }
 $(document).ready(function() {
 	window.slideout = new Slideout($(".page"));
